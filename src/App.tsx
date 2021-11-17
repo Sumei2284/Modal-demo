@@ -1,8 +1,37 @@
 import React, { FC, useState } from 'react';
-import { Modal, Button, Tag, Checkbox, List } from 'antd';
+import { Modal, Button, Checkbox, List } from 'antd';
+import styled from 'styled-components';
 import './App.css';
 
-const msg = "you have to select at least one option.";let list_item = [""];
+const msg = "you have to select at least one option.";
+let list_item = [""];
+const plainOptions = ['Apple', 'Pear', 'Orange'];
+
+const StyledCheckboxGroup = styled(Checkbox.Group)`
+    display: flex;
+
+    .ant-checkbox-group-item {
+        .ant-checkbox {
+            display: none;
+        }
+
+        span {
+            padding: 10px;
+            background-color: #F3F3F3;
+            color: #000000;
+            border-radius: 0.3rem;
+            font-weight: normal;
+            white-space: nowrap;
+        }
+
+        &.ant-checkbox-wrapper-checked {
+            span {
+                color: #FFFFFF;
+                background-color: #2E63A3;
+            }
+        }
+    }
+`;
 
 const App: FC = () => {
   
@@ -11,7 +40,7 @@ const App: FC = () => {
   const [status, setStatus] = useState(false);
   const [data, setData] = useState([""]);
   
-
+  //Function of Modal
   function showModal() {
     setVisiblestate(true);
   }
@@ -24,39 +53,45 @@ const App: FC = () => {
     }
   }
   const handleCancel = () => {
-    console.log('click cancel');
     setData([""]);
     setVisiblestate(false);
+    setStatus(false);
   }
 
   //checkbox
-  function onChange(checkedValues: any) {
+  function onChange1(checkedValues: any) {
     console.log('checked = ', ...checkedValues);
     setData(checkedValues);
     if(checkedValues.length > 0){
-      console.log('bigger than 1');
       setStatus(true);
     }else{
-      console.log('equals 0');
       setStatus(false);
     }
   }
-  
-  const plainOptions = ['Apple', 'Pear', 'Orange'];
+
+  function onChange2(checkedValues: any) {
+    console.log('checked = ', ...checkedValues);
+    setData(checkedValues);
+    if(checkedValues.length > 0){
+      setStatus(true);
+    }else{
+      setStatus(false);
+    }
+  }
 
   return (
     <div className="Layout">
       <div className="add_button">
-        <Button type="primary" onClick={showModal}>Open</Button>
+        <Button type="primary" onClick={showModal}>Incert...</Button>
         <Modal
           title="Basic Modal"
           visible={visiblestate}
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <Checkbox.Group options={plainOptions} onChange={onChange} />
+          <StyledCheckboxGroup options={plainOptions} onChange={onChange1} />
           <br />
-          <Checkbox.Group options={data} onChange={onChange} />
+          <StyledCheckboxGroup options={data} onChange={onChange2} />
           <br />
           <p className="msg">{(data.length===0) && msg}</p>
         </Modal>
@@ -81,3 +116,5 @@ const App: FC = () => {
 };
 
 export default App;
+
+
