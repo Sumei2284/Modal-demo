@@ -1,12 +1,8 @@
 import React, { FC, useState } from 'react';
-import { Modal, Button, Tag, Checkbox } from 'antd';
+import { Modal, Button, Tag, Checkbox, List } from 'antd';
 import './App.css';
-//import HotTags from './components/HotTags';
-const { CheckableTag } = Tag;
 
-const tagsData = ['Movies', 'Books', 'Music', 'Sports'];
-
-const msg = "you have to select at least one option.";
+const msg = "you have to select at least one option.";let list_item = [""];
 
 const App: FC = () => {
   
@@ -14,8 +10,8 @@ const App: FC = () => {
   const [visiblestate,setVisiblestate] = useState(false);
   const [status, setStatus] = useState(false);
   const [data, setData] = useState([""]);
-  const checkedValues = [""];
   
+
   function showModal() {
     setVisiblestate(true);
   }
@@ -23,19 +19,15 @@ const App: FC = () => {
     console.log('click ok');
     if(data.length > 0){
       setVisiblestate(false);
-    }else{
-
+      console.log(data.toString());
+      list_item.push(...data);
     }
-    
   }
   const handleCancel = () => {
     console.log('click cancel');
     setData([""]);
     setVisiblestate(false);
   }
-  //checkable tags
-  //const tags = new HotTags();
-  //show data
 
   //checkbox
   function onChange(checkedValues: any) {
@@ -48,14 +40,13 @@ const App: FC = () => {
       console.log('equals 0');
       setStatus(false);
     }
-    //console.log(Object.prototype.toString.call(checkedValues));
   }
   
   const plainOptions = ['Apple', 'Pear', 'Orange'];
 
   return (
     <div className="Layout">
-      <div>
+      <div className="add_button">
         <Button type="primary" onClick={showModal}>Open</Button>
         <Modal
           title="Basic Modal"
@@ -63,48 +54,30 @@ const App: FC = () => {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <HotTags />
-          <br />
           <Checkbox.Group options={plainOptions} onChange={onChange} />
+          <br />
+          <Checkbox.Group options={data} onChange={onChange} />
+          <br />
+          <p className="msg">{(data.length===0) && msg}</p>
         </Modal>
       </div>
       <div className="show-data">
         {status &&
-          <p>{data}</p>}
+          <>
+            <p>{data}</p>
+            <List
+            bordered
+            dataSource={list_item}
+            renderItem={item => (
+              <List.Item>
+                {item}
+              </List.Item>
+            )} />
+          </>
+          }
       </div>
   </div>
   )
 };
 
 export default App;
-
-class HotTags extends React.Component {
-  state = {
-    selectedTags: ['']
-  };
-
-  handleChange(tag: string, checked: boolean) {
-    const { selectedTags } = this.state;
-    const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag);
-    console.log('You are interested in: ', ...nextSelectedTags);
-    this.setState({ selectedTags: nextSelectedTags });
-    console.log(...nextSelectedTags);
-  }
-
-  render() {
-    const { selectedTags } = this.state;
-    return (
-      <>
-        {tagsData.map(tag => (
-          <CheckableTag
-            key={tag}
-            checked={selectedTags.indexOf(tag) > -1}
-            onChange={checked => this.handleChange(tag, checked)}
-          >
-            {tag}
-          </CheckableTag>
-        ))}
-      </>
-    );
-  }
-}
