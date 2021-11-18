@@ -3,10 +3,6 @@ import { Modal, Button, Checkbox, List } from 'antd';
 import styled from 'styled-components';
 import './App.css';
 
-const msg = "you have to select at least one option.";
-let list_item = [""];
-const plainOptions = ['Apple', 'Pear', 'Orange'];
-
 const StyledCheckboxGroup = styled(Checkbox.Group)`
     display: flex;
 
@@ -34,50 +30,42 @@ const StyledCheckboxGroup = styled(Checkbox.Group)`
 `;
 
 const App: FC = () => {
-  
+  const msg = "you have to select at least one option.";
+  const plainOptions = ['Apple', 'Pear', 'Orange'];let final_data: string[] = [];
   //function and variables for Modal
   const [visiblestate,setVisiblestate] = useState(false);
-  const [status, setStatus] = useState(false);
-  const [data, setData] = useState([""]);
+  const [upperdata, setUpperdata] = useState<string[]>([]);
+  const [bottomdata, setBottomdata] = useState<string[]>([]);
   
   //Function of Modal
   function showModal() {
     setVisiblestate(true);
   }
   const handleOk = () => {
-    console.log('click ok');
-    if(data.length > 0){
-      setVisiblestate(false);
-      console.log(data.toString());
-      list_item.push(...data);
-    }
+    merge();
+    setVisiblestate(false);
   }
   const handleCancel = () => {
-    setData([""]);
     setVisiblestate(false);
-    setStatus(false);
   }
 
   //checkbox
   function onChange1(checkedValues: any) {
     console.log('checked = ', ...checkedValues);
-    setData(checkedValues);
-    if(checkedValues.length > 0){
-      setStatus(true);
-    }else{
-      setStatus(false);
-    }
+    setUpperdata(checkedValues);
   }
-
   function onChange2(checkedValues: any) {
     console.log('checked = ', ...checkedValues);
-    setData(checkedValues);
-    if(checkedValues.length > 0){
-      setStatus(true);
-    }else{
-      setStatus(false);
-    }
+    setBottomdata(checkedValues);
   }
+
+  //merge two data array
+  function merge() {
+    final_data = upperdata.concat(bottomdata);
+    // console.log(final_data);
+    console.log(upperdata.concat(bottomdata));
+  }
+
 
   return (
     <div className="Layout">
@@ -91,23 +79,22 @@ const App: FC = () => {
         >
           <StyledCheckboxGroup options={plainOptions} onChange={onChange1} />
           <br />
-          <StyledCheckboxGroup options={data} onChange={onChange2} />
+          <StyledCheckboxGroup options={upperdata} onChange={onChange2} />
           <br />
-          <p className="msg">{(data.length===0) && msg}</p>
+          <p className="msg">{(final_data.length===0) && msg}</p>
         </Modal>
       </div>
       <div className="show-data">
-        {status &&
+        {(final_data.length > 0) &&
           <>
-            <p>{data}</p>
             <List
-            bordered
-            dataSource={list_item}
-            renderItem={item => (
-              <List.Item>
-                {item}
-              </List.Item>
-            )} />
+              dataSource={final_data}
+              renderItem={item => (
+                <List.Item>
+                  {item}
+                </List.Item>
+              )} 
+            />
           </>
           }
       </div>
